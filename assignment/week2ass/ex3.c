@@ -29,7 +29,8 @@ int main(void)
     p->num = 12100001;
     p->score = 100;
     // 4.请将相关信息打印到屏幕上，并截图
-    printf("Student name: %s\nStudent ID: %d\nStudent score: %f\nStudent birthday: %d-%d-%d\n", p->name, p->num, p->score, p->birthday.year, p->birthday.month, p->birthday.day);
+    printf("student1:\nStudent name: %s\nStudent ID: %d\nStudent score: %f\nStudent birthday: %d-%d-%d\n", student1.name, student1.num, student1.score, student1.birthday.year, student1.birthday.month, student1.birthday.day);
+    printf("p:\nStudent name: %s\nStudent ID: %d\nStudent score: %f\nStudent birthday: %d-%d-%d\n", p->name, p->num, p->score, p->birthday.year, p->birthday.month, p->birthday.day);
     // ----end----
     return 0;
 }
