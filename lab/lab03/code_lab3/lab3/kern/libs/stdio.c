@@ -1,6 +1,11 @@
 #include <console.h>
 #include <defs.h>
 #include <stdio.h>
+#include <sbi.h>
+
+void shutdown(void) {
+    sbi_shutdown();
+}
 
 /* HIGH level console I/O */
 

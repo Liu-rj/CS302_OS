@@ -4,18 +4,24 @@
 
 int kern_init(void) __attribute__((noreturn));
 
-int kern_init(void) {
+int kern_init(void)
+{
     extern char edata[], end[];
     memset(edata, 0, end - edata);
 
     const char *message = "os is loading ...\n";
     cputs(message);
 
-    const char* msg = "SUSTech OS\n";
-    cputs(msg);
+    // const char *msg = "SUSTech OS\n";
+    // cputs(msg);
 
-    const char* double_msg = "ILOVEOS\n";
-    double_puts(double_msg);
+    // const char *double_msg = "ILOVEOS\n";
+    // double_puts(double_msg);
+
+    //------------------------------------
+    cputs("The system will close.\n");
+    shutdown();
+    // -----------------------------------
 
     while (1)
         ;
