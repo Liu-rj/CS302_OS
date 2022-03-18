@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "console.h": "c",
+        "riscv.h": "c",
+        "defs.h": "c",
+        "clock.h": "c",
+        "stdio.h": "c"
+    }
+}
