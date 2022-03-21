@@ -36,30 +36,39 @@ SID: 11911808
 * Add the child process to the task list
 * User space of the child process is also copied and updated
 * fork() is completed, return value is set in both the parent process and newly forked child process respectively to be the child process PID and 0
-* 
+* CPU scheduler decide which process to be executed next
+* If parent process is to be executed next, the child PID is returned, program switch back to user mode and the process is continued
+* If child process is to be executed next, there will be a context switch from parent process to child process which involves PCB reload, pc rebase and switch from kernel mode to user mode, starting running process B
 
 (2) Explain what happens when the kernel handles the exit() system call
 
-## 4) Describe how to call `ecall` instruction step by step after the kernel boot up
-* When the kernel boot up, the first instruction to execute is set to `kern_entry` in `kernel.ld`.
+* When exit() system call is invoked, the program switch from user mode to kernel mode
+* The kernel frees all allocated memory in kernel space, except the PID and the list of opened files are closed
+* The kernel frees everything on the user-space memory about the concerned process, including program code and allocated memory
+* The kernel sends a SIGCHLD signal to its parent process which notifies the child process has now terminated
+* If its parent process invoked wait() system call
+  * the kernel will register a signal handling routine for parent process and the process is blocked
+  * When it receives SIGCHLD, the corresponding signal handling routine is invoked
+  * The SIGCHLD handler accepts and removes the SIGCHLD signal and destroys the child process in the kernel-space (remove it from process table, task-list, etc.)
+  * Now the child process is truly dead and recycled
+* If the parent process hasn't invoked wait() system call
+  * the parent process doesn't respond to the SIGCHLD signal
+  * Thus, the child process becomes a zombie until the parent process invoked wait() and receive its SIGCHLD signal
 
-* Then in `entry.S`, the function `kern_init` in `init.c` is invoked in `kern_entry`.
-* In function `kern_init`, `cputs` function is invoked.
-* Then in `stdio.c`, `cputs` invokes `cputch` which further invokes `cons_putc` in `console.c`.
-* In `console.c`, `cons_putc` invokes `sbi_console_putchar` in `sbi.c`.
-* Finally, in `sbi.c`, `sbi_console_putchar` invokes `sbi_call` where `ecall` is called.
+## 4. What are the three methods of transferring the control of the CPU from a user process to OS kernel?
 
-## 5) Refer to `ecall`, Implement `shutdown()` to shutdown the system.
-* Modified codes:
+* system call: system calls in user program require the switch from user mode to kernel mode, which typically ask for the control of kernel resources
+* interrupt: Typically invoked by interrupt signals, the signals received is passed to trap handler who further dispatches the task to the corresponding interrupt handler function
+* exception: Typically invoked by exception signals, the signals received is passed to trap handler who further dispatches the task to the corresponding exception handler function
 
-![Screenshot from 2022-03-07 11-26-56](/home/lrj11911808/Pictures/Screenshot from 2022-03-07 11-26-56.png)
+## 5. Describe the life cycle of a process
 
-![Screenshot from 2022-03-07 11-27-10](/home/lrj11911808/Pictures/Screenshot from 2022-03-07 11-27-10.png)
+* Birth: Except the first process “init”, every process is created using fork()
+* After one process is just forked or OS scheduler choose another process to run or a process is just returning from blocked states, the process will enter `ready state`
+* When OS chooses this process to be running on the CPU, the process state is adjusted to `running state`
+* While the process the running, it may wait for some resources, which will cause the process to be in `blocking state`
+* In `blocking state`, when response arrives, the status of the process changes back to `ready state`
+* When the process goes to an end or is forced to terminate, the process enters `Zombie(terminated) state`
 
-![Screenshot from 2022-03-07 11-27-23](/home/lrj11911808/Pictures/Screenshot from 2022-03-07 11-27-23.png)
+## 6. Realize a shell of your own in myshell.c through fork () + exec () + wait ()
 
-![Screenshot from 2022-03-07 11-27-33](/home/lrj11911808/Pictures/Screenshot from 2022-03-07 11-27-33.png)
-
-* Result:
-
-![Screenshot from 2022-03-07 11-26-32](/home/lrj11911808/Pictures/Screenshot from 2022-03-07 11-26-32.png)
