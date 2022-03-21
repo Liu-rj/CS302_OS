@@ -75,6 +75,23 @@ int main()
             }
             chdir(args[1]);
         }
+        else if (strcmp(args[index - 1], "&") == 0)
+        {
+            if (fork() == 0)
+            {
+                setpgid(0, 0);
+                dup(STDIN_FILENO);
+                dup(STDOUT_FILENO);
+                dup(STDERR_FILENO);
+                int error = 0;
+                error = execvp(args[0], args);
+                if (error == -1)
+                {
+                    printf("Command '%s' not found\n", command);
+                }
+                return 0;
+            }
+        }
         else
         {
             if ((pid = fork()))
@@ -92,10 +109,6 @@ int main()
                 }
                 return 0;
             }
-            // if (strcmp(args[0], "nohup") != 0)
-            // {
-            //     wait(NULL);
-            // }
         }
     }
     return 0;
