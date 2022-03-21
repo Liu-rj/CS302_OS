@@ -29,7 +29,14 @@ SID: 11911808
 
 (1) Explain what happens when the kernel handles the fork() system call
 
-
+* When fork() system call is invoked, the program switch from user mode to kernel mode (save and restore context)
+* In OS kernel, new address space is created for the child process, and copy the kernel space (PCB) of parent process to the newly created address space
+* OS kernel does the kernel update of the child kernel space, which includes PID, running time, and a pointer to its parent
+* OS kernel will also create a pointer in parent process's kernel space which points to the forked child
+* Add the child process to the task list
+* User space of the child process is also copied and updated
+* fork() is completed, return value is set in both the parent process and newly forked child process respectively to be the child process PID and 0
+* 
 
 (2) Explain what happens when the kernel handles the exit() system call
 
