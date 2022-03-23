@@ -19,8 +19,7 @@ struct Redirection
     char *file;
 } Redirection;
 
-void
-maySimplifyPwd(char *pwd, char *userName)
+void maySimplifyPwd(char *pwd, char *userName)
 {
     char *homePath = "/home/";
     char path[128];
@@ -34,7 +33,7 @@ maySimplifyPwd(char *pwd, char *userName)
     }
 }
 
-int parseLine(struct Command commands[], char *line, struct Redirection* redirection)
+int parseLine(struct Command commands[], char *line, struct Redirection *redirection)
 {
     char *p = strtok(line, " ");
     int index = 0;
@@ -55,18 +54,24 @@ int parseLine(struct Command commands[], char *line, struct Redirection* redirec
             redirection->flag = 1;
             p = strtok(NULL, " ");
             redirection->file = p;
+            p = strtok(NULL, " ");
+            continue;
         }
         commands[index].args[commands[index].length++] = p;
         p = strtok(NULL, " ");
     }
+    commands[index].args[commands[index].length] = NULL;
     return index + 1;
 }
 
 void singleProcess(struct Command command, struct Redirection redirection)
 {
     int error = 0;
-    int file = open(redirection.file, O_WRONLY|O_CREAT|O_TRUNC, 7777);
-    dup2(file, STDOUT_FILENO);
+    if (redirection.flag)
+    {
+        int file = open(redirection.file, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRGRP | S_IROTH);
+        dup2(file, STDOUT_FILENO);
+    }
     error = execvp(command.args[0], command.args);
     if (error == -1)
     {
@@ -107,6 +112,11 @@ void pipeProcess(struct Command commands[], int size, struct Redirection redirec
     close(myPipe[1]);
     dup2(myPipe[0], STDIN_FILENO);
     int error = 0;
+    if (redirection.flag)
+    {
+        int file = open(redirection.file, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRGRP | S_IROTH);
+        dup2(file, STDOUT_FILENO);
+    }
     error = execvp(commands[size - 1].args[0], commands[size - 1].args);
     if (error == -1)
     {
@@ -121,7 +131,7 @@ int main()
     char hostName[128];
     char *pwd = (char *)malloc(128 * sizeof(char));
     char *userName;
-    char line[1024], *args[128];
+    char line[1024];
     struct Command commands[128];
     while (1)
     {
@@ -139,6 +149,7 @@ int main()
         line[strlen(line) - 1] = '\0';
         // start split the string
         struct Redirection redirection;
+        redirection.flag = 0;
         int size = parseLine(commands, line, &redirection);
 
         if (strcmp(commands[0].args[0], "exit") == 0)
@@ -181,12 +192,12 @@ int main()
                 }
                 if (size == 1)
                 {
-                    singleProcess(commands[0], Redirection);
+                    singleProcess(commands[0], redirection);
                     return 0;
                 }
                 else
                 {
-                    pipeProcess(commands, size, Redirection);
+                    pipeProcess(commands, size, redirection);
                     return 0;
                 }
             }

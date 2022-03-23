@@ -13,9 +13,9 @@ SID: 11911808
 
 2. How do these “three easy pieces” map to the chapters in the “dinosaur book”?
 
-* Virtualization: Chapter 3,5,9,10
-* Concurrency: Chapter 3,4,5,6,7,8
-* Persistence: Chapter 11,12,13,14,15
+* Virtualization: Chapter 5,10
+* Concurrency: Chapter 4,6,7,8
+* Persistence: Chapter 12,13,14,15
 
 ## 2. What happens during context switch in detail?
 * Process A is running
@@ -72,3 +72,48 @@ SID: 11911808
 
 ## 6. Realize a shell of your own in myshell.c through fork () + exec () + wait ()
 
+* start the shell
+
+![Screenshot from 2022-03-23 19-45-29](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 19-45-29.png)
+
+* Basic Instructions -- ps, ls, ls -al, pwd
+
+![Screenshot from 2022-03-23 19-51-06](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 19-51-06.png)
+
+* Basic Instructions -- which, echo, touch, cat, rm
+
+![Screenshot from 2022-03-23 19-56-28](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 19-56-28.png)
+
+
+* cd .., cd, cd ~, cd /home, cd /
+
+![Screenshot from 2022-03-23 19-58-22](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 19-58-22.png)
+
+
+* exit
+
+![Screenshot from 2022-03-23 19-58-49](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 19-58-49.png)
+
+* background process
+
+One can launch background process using `&` and the terminal goes without being blocked
+
+![Screenshot from 2022-03-23 20-00-06](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 20-00-06.png)
+
+* pipe
+
+![Screenshot from 2022-03-23 20-01-31](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 20-01-31.png)
+
+* FIFO
+
+one can launch a FIFO as usual and it will be blocked until someone reads
+
+![Screenshot from 2022-03-23 20-02-43](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 20-02-43.png)
+
+![Screenshot from 2022-03-23 20-03-03](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 20-03-03.png)
+
+* ctrl + c
+
+ctrl + c can terminate child process while it loses efficacy on the shell itself
+
+![Screenshot from 2022-03-23 20-04-20](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 20-04-20.png)
