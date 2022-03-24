@@ -72,6 +72,8 @@ SID: 11911808
 
 ## 6. Realize a shell of your own in myshell.c through fork () + exec () + wait ()
 
+### Results Display
+
 * start the shell
 
 ![Screenshot from 2022-03-23 19-45-29](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 19-45-29.png)
@@ -117,3 +119,29 @@ one can launch a FIFO as usual and it will be blocked until someone reads
 ctrl + c can terminate child process while it loses efficacy on the shell itself
 
 ![Screenshot from 2022-03-23 20-04-20](/home/lrj11911808/Pictures/Screenshot from 2022-03-23 20-04-20.png)
+
+### Codes
+
+* start the shell, get `username`, `hostname`, `pwd`. Also check if the `pwd` can be simplified by replacing `/home/username` with `~`. Then print it on the screen.
+
+ ![Screenshot from 2022-03-24 10-09-10](/home/lrj11911808/Pictures/Screenshot from 2022-03-24 10-09-10.png)
+
+* handle `exit` command
+
+![Screenshot from 2022-03-24 10-09-22](/home/lrj11911808/Pictures/Screenshot from 2022-03-24 10-09-22.png)
+
+* handle `cd` command
+
+![Screenshot from 2022-03-24 10-09-29](/home/lrj11911808/Pictures/Screenshot from 2022-03-24 10-09-29.png)
+
+* handle `background process`
+
+![Screenshot from 2022-03-24 10-10-06](/home/lrj11911808/Pictures/Screenshot from 2022-03-24 10-10-06.png)
+
+* handle `single` command with output redirection (`FIFO`)
+
+![Screenshot from 2022-03-24 10-10-29](/home/lrj11911808/Pictures/Screenshot from 2022-03-24 10-10-29.png)
+
+* handle `pipe`
+
+![Screenshot from 2022-03-24 10-11-02](/home/lrj11911808/Pictures/Screenshot from 2022-03-24 10-11-02.png)
