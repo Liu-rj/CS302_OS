@@ -54,21 +54,21 @@ Finally, the format of a virtual address should be:
 
 page size: $2^{12} \ Bytes = 4 \ KBytes$.
 
-maximum page table size: $2^{20} \times 4 \ Bytes= 16 \ MBytes$
+maximum page table size: $2^{20} \times 4 \ Bytes= 4 \ MBytes$
 
 (b) Suppose it uses 2-level page table
 
 * virtual address 0xC302C302
 
-1-st level page number: 10,144,127,514
+1-st level page number: 1100 0011 00(2) = 780(10)
 
-offset: 10,144,125,412
+offset: 0011 0000 0010(2) = 770(10)
 
 * virtual address 0xEC6666AB
 
-2-nd level page number: 10,212,567,461
+2-nd level page number: 10 0110 0110(2) = 614(10)
 
-offset: 122,020,147,423
+offset: 0110 1010 1011(2) = 1707(10)
 
 ## 5. Please realize merging free blocks in default_free_pages()
 
