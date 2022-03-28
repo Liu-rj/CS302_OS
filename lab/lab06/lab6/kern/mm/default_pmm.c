@@ -154,7 +154,39 @@ default_free_pages(struct Page *base, size_t n) {
     //-----------------------合并空闲块--------------------
 
 
-    
+    list_entry_t* ptr = NULL;
+    struct Page* new_base = base;
+    // check if the previous page is contiguous with base
+    ptr = list_prev(&(new_base->page_link));
+    if (ptr != &free_list)
+    {
+        struct Page* page = le2page(ptr, page_link);
+        if (page + page->property == new_base)
+        {
+            // if contiguous, set new base and adjust property and list structure
+            page->property += new_base->property;
+            new_base->property = 0;
+            page->page_link.next = new_base->page_link.next;
+            page->page_link.next->prev = &page->page_link;
+            ClearPageProperty(new_base);
+            new_base = page;
+        }
+    }
+    // check if the next page is contiguous with current new base
+    ptr = list_next(&(new_base->page_link));
+    if (ptr != &free_list)
+    {
+        struct Page* page = le2page(ptr, page_link);
+        if (new_base + new_base->property == page)
+        {
+            // if contiguous, set new base and adjust property and list structure
+            new_base->property += page->property;
+            page->property = 0;
+            new_base->page_link.next = page->page_link.next;
+            new_base->page_link.next->prev = &new_base->page_link;
+            ClearPageProperty(page);
+        }
+    }
 
 
     //---------------------------------------------------
@@ -335,8 +367,8 @@ const struct pmm_manager default_pmm_manager = {
     .alloc_pages = default_alloc_pages,
     .free_pages = default_free_pages,
     .nr_free_pages = default_nr_free_pages,
-    .check = default_check,
+    // .check = default_check,
     // 合并空闲块之后，请将上面的check注释，下面的check解除注释，进行测试
-    //.check = firstfit_check_final,
+    .check = firstfit_check_final,
 };
 

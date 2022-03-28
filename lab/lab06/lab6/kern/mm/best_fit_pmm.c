@@ -12,22 +12,68 @@ free_area_t free_area;
 static void
 best_fit_init(void)
 {
- //TODO
-
+    list_init(&free_list);
+    nr_free = 0;
 }
 
 static void
 best_fit_init_memmap(struct Page *base, size_t n)
 {
- //TODO
-
+    assert(n > 0);
+    struct Page *p = base;
+    for (; p != base + n; p ++) {
+        assert(PageReserved(p));
+        p->flags = p->property = 0;
+        set_page_ref(p, 0);
+    }
+    base->property = n;
+    SetPageProperty(base);
+    nr_free += n;
+    if (list_empty(&free_list)) {
+        list_add(&free_list, &(base->page_link));
+    } else {
+        list_entry_t* le = &free_list;
+        while ((le = list_next(le)) != &free_list) {
+            struct Page* page = le2page(le, page_link);
+            if (base < page) {
+                list_add_before(le, &(base->page_link));
+                break;
+            } else if (list_next(le) == &free_list) {
+                list_add(le, &(base->page_link));
+            }
+        }
+    }
 }
 
 static struct Page *
 best_fit_alloc_pages(size_t n)
 {
+    assert(n > 0);
+    if (n > nr_free) {
+        return NULL;
+    }
     struct Page *page = NULL;
-    //TODO   
+    size_t size = __SIZE_MAX__;
+    list_entry_t *le = &free_list;
+    while ((le = list_next(le)) != &free_list) {
+        struct Page *p = le2page(le, page_link);
+        if (p->property >= n && p->property < size) {
+            page = p;
+            size = p->property;
+        }
+    }
+    if (page != NULL) {
+        list_entry_t* prev = list_prev(&(page->page_link));
+        list_del(&(page->page_link));
+        if (page->property > n) {
+            struct Page *p = page + n;
+            p->property = page->property - n;
+            SetPageProperty(p);
+            list_add(prev, &(p->page_link));
+        }
+        nr_free -= n;
+        ClearPageProperty(page);
+    }
 
     return page;
 
@@ -36,8 +82,71 @@ best_fit_alloc_pages(size_t n)
 static void
 best_fit_free_pages(struct Page *base, size_t n)
 {
- //TODO 
-    
+    assert(n > 0);
+    struct Page *p = base;
+    for (; p != base + n; p ++) {
+        assert(!PageReserved(p) && !PageProperty(p));
+        p->flags = 0;
+        set_page_ref(p, 0);
+    }
+    base->property = n;
+    SetPageProperty(base);
+    nr_free += n;
+
+    if (list_empty(&free_list)) {
+        list_add(&free_list, &(base->page_link));
+    } else {
+        list_entry_t* le = &free_list;
+        while ((le = list_next(le)) != &free_list) {
+            struct Page* page = le2page(le, page_link);
+            if (base < page) {
+                list_add_before(le, &(base->page_link));
+                break;
+            } else if (list_next(le) == &free_list) {
+                list_add(le, &(base->page_link));
+            }
+        }
+    }
+
+    //-----------------------合并空闲块--------------------
+
+
+    list_entry_t* ptr = NULL;
+    struct Page* new_base = base;
+    // check if the previous page is contiguous with base
+    ptr = list_prev(&(new_base->page_link));
+    if (ptr != &free_list)
+    {
+        struct Page* page = le2page(ptr, page_link);
+        if (page + page->property == new_base)
+        {
+            // if contiguous, set new base and adjust property and list structure
+            page->property += new_base->property;
+            new_base->property = 0;
+            page->page_link.next = new_base->page_link.next;
+            page->page_link.next->prev = &page->page_link;
+            ClearPageProperty(new_base);
+            new_base = page;
+        }
+    }
+    // check if the next page is contiguous with current new base
+    ptr = list_next(&(new_base->page_link));
+    if (ptr != &free_list)
+    {
+        struct Page* page = le2page(ptr, page_link);
+        if (new_base + new_base->property == page)
+        {
+            // if contiguous, set new base and adjust property and list structure
+            new_base->property += page->property;
+            page->property = 0;
+            new_base->page_link.next = page->page_link.next;
+            new_base->page_link.next->prev = &new_base->page_link;
+            ClearPageProperty(page);
+        }
+    }
+
+
+    //---------------------------------------------------
 }
 
 static size_t

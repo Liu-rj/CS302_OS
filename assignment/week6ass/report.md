@@ -72,7 +72,36 @@ offset: 122,020,147,423
 
 ## 5. Please realize merging free blocks in default_free_pages()
 
+Codes:
 
+![Screenshot from 2022-03-28 20-36-10](/home/lrj11911808/Pictures/Screenshot from 2022-03-28 20-36-10.png)
+
+Result Display:
+
+![Screenshot from 2022-03-28 20-49-29](/home/lrj11911808/Pictures/Screenshot from 2022-03-28 20-30-58.png)
 
 ## 6. Realize bestfit in best_fit_pmm.c
 
+Codes:
+
+* init
+
+![Screenshot from 2022-03-28 20-50-21](/home/lrj11911808/Pictures/Screenshot from 2022-03-28 20-50-21.png)
+
+* init_memmap
+
+![Screenshot from 2022-03-28 20-50-33](/home/lrj11911808/Pictures/Screenshot from 2022-03-28 20-50-33.png)
+
+* alloc
+
+![Screenshot from 2022-03-28 20-50-45](/home/lrj11911808/Pictures/Screenshot from 2022-03-28 20-50-45.png)
+
+* free
+
+![Screenshot from 2022-03-28 20-51-02](/home/lrj11911808/Pictures/Screenshot from 2022-03-28 20-51-02.png)
+
+![Screenshot from 2022-03-28 20-51-15](/home/lrj11911808/Pictures/Screenshot from 2022-03-28 20-51-15.png)
+
+Result Display:
+
+![Screenshot from 2022-03-28 20-49-29](/home/lrj11911808/Pictures/Screenshot from 2022-03-28 20-49-29.png)
