@@ -23,7 +23,7 @@ vma_struct描述一段连续的虚拟地址，从 vm_start 到 vm_end 。 通过
 1. 访问的虚拟地址内容不在内存中，需要从外设载入，建立映射。必要时使用页面替换算法替换掉其他的物理页面。
 2. 实现代码对应片段：
 
-
+![Screenshot from 2022-04-06 17-47-43](/home/lrj11911808/Pictures/Screenshot from 2022-04-06 17-47-43.png)
 
 ### 5.swap_in和swap_out分别发生在什么时候？（选做，建议做）
 
