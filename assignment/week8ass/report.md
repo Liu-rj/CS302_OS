@@ -41,6 +41,16 @@ When the process accesses a memory page not present in the physical memory, it c
 
 ## 3. Realize Clock algorithm in swap_clock.c
 
+![Screenshot from 2022-04-14 18-07-53](/home/lrj11911808/Pictures/Screenshot from 2022-04-14 18-07-53.png)
 
+![Screenshot from 2022-04-14 18-08-35](/home/lrj11911808/Pictures/Screenshot from 2022-04-14 18-08-35.png)
+
+![Screenshot from 2022-04-14 18-09-55](/home/lrj11911808/Pictures/Screenshot from 2022-04-14 18-09-55.png)
 
 ## 4. Realize LRU algorithm in swap_lru.c
+
+![Screenshot from 2022-04-14 18-08-50](/home/lrj11911808/Pictures/Screenshot from 2022-04-14 18-08-50.png)
+
+![Screenshot from 2022-04-14 18-09-04](/home/lrj11911808/Pictures/Screenshot from 2022-04-14 18-09-04.png)
+
+![Screenshot from 2022-04-14 18-10-22](/home/lrj11911808/Pictures/Screenshot from 2022-04-14 18-10-22.png)
