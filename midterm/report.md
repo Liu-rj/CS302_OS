@@ -10,17 +10,34 @@
 
 #### (2) Please explain the three usage models of virtualization: workload isolation, workload consolidation, workload migration.
 
-* workload isolation: workload isolation by utilizing virtualization has benefits to the overall system in two perspectives. One is system security, which will be improved because instructions executed are confined to the VM in which they occur, so vicious instructions won't do harm to the hardware. The other is system reliability, which can be enhanced because software programs are isolated in different VMs, so software failure on one VM do not affect the other VMs.
+* workload isolation: Workload isolation by utilizing virtualization has benefits to the overall system in two perspectives. One is system security, which will be improved because instructions executed are confined to the VM in which they occur, so vicious instructions won't do harm to the hardware. The other is system reliability, which can be enhanced because software programs are isolated in different VMs, so software failure on one VM do not affect the other VMs.
+* workload consolidation: There are mainly three benefits that virtualization has brought about to workload consolidation. The first is to solve the problem of proliferation of heterogeneous data and underutilized servers, virtualization make it possible to consolidate individual workloads onto a single physical platform within a single VM regardless of different hardware and systems, reducing the total cost of ownership. The second is that virtualization mitigates the challenges of software-hardware upgrads by allowing systems to run legacy and new operating systems concurrently.
+* workload migration: virtualization decouples the guest from the hardware on which it is currently running. So, it is easier to migrate the guest to a different platform. In addition, VM migration can be triggered automatically by workload balancing or failure-prediction agents. This capability delivers improved quality of service at a lower operational cost.
 
 #### (3) List 3 well-known VMMs.
 
-
+* Xen
+* Virtual PC
+* VMotion
 
 #### (4) Explain the following terms: paravirtualization, full virtualization, binary translation, hardware-assisted virtualization, hybrid virtualization.
+
+* paravirtualization: paravirtualization is an enhancement of virtualization technology in which a guest OS that has been modified inside a virtual machine (VM) in order to use hypercalls for operations to handle instructions at compile time.
+* full virtualization: full virtualization is a virtualization where the virtual hardware exposed is functionally identical to the underlying machine which allows unmodified operating systems to be hosted.
+* binary translation: binary translation is where A VMM can support legacy operating systems by making modifications directly to guest-OS binaries, and thus supporting a broader range of operating systems, albeit with higher performance overheads, than VMMs that use paravirtualization.
+* hardware-assisted virtualization: In hardware-assited virtualization, VMM runs in the privilege mode and allow a cpu instruction set to run directly without modifying guest OSes.
+* hybrid virtualization:  hybrid-virtualization combines paravirtualization and hardware-assisted virtualization. For I/O devices, Timer, Idle handling, Interrupt controllers and MMU are identified to use para-virtualization while maintaining the same cpu behavoir as the hardware-assisted virtualization.
 
 ## 2. Privilege levels
 
 #### (1) How many privilege levels does x86 (IA-32) provide? How are they used by OS and user processes (considering an ordinary OS without virtualization)? Please provide three examples of the importance of privilege separation.
+
+1. x86 (IA-32) provides 4 privilege levels, from 0 (highest) to 1 (lowest). 
+2. In a nonvirtualized system, OS operates at level 0 and all software applications run at level 3.
+3. Three examples of the importance:
+   1. This can protect the hardware which will only be accessed by trustedworthy processes with higher previliege, preventing the hardware being messed up by user processes.
+   2.  When user processes crashed, this ensure that OS kernel processes with higher privilege won't be blocked by processes at a lower previliege, and can continue to clean up the mess and mantain the stability of the system.
+   3. Processes with higher previliege can mitigate the potential damage of a computer security vulnerability if vicious user programs take place.
 
 #### (2) What is ring compression?
 
