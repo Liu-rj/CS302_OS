@@ -63,17 +63,29 @@ VMX root operation and VMX non-root operation are two forms of CPU operation in 
 
 #### (7) How does Intel VT-x address the challenges of ring aliasing and ring compression?
 
-
+* ring aliasing: Intel VT-x allows a VMM to run guest software as its intended privilege level. So instructions like push and br.call won't reveal that software is actually running in a virtual machine.
+* ring compression: Intel VT-x, guest OS runs in VMX non-root operation, which support all four privilege levels, allowing a guest OS to run at its intended privilege level and thus preventing it from being ran at the same privilege as software. 
 
 ## 3. System calls, interrupts and exceptions
 
 #### (1) In the context of ordinary OS without virtualization, what are the purpose of system calls? What is the main difference between system calls and function calls? On x86-64 Linux, how are system call parameters passed to the kernel?
 
+* purpose of system calls:  system calls provide an API between a process and an OS to allow user-level processes to request services of the operating system. It can also protect the OS and hardware from directly accessed by user processes since system calls are the only entry points into the kernel system.
+* Main difference: system calls contrains a switch from user space to kernel space, while functional calls remains in the user space.
+* On x86-64 linux, system call parameters are passed to the kernel through cpu registers by signal trap.
+
 #### (2) What is a hypercall in Xen?
+
+In Xen, hypercall is a interface for controlling interactions between Xen and the overlying domain. The hypercall interface allows domains to perform a synchronous software trap into the hypervisor to perform a privileged operation, analogous to the use of system calls in conventional operating systems. 
 
 #### (3) How does Xen virtualize exceptions on x86 (IA-32)? What modifications does Xen make to the original x86 exception handlers?
 
+* How: A table describing the handler for each type of exception is registered with Xen for validation. Since the stack frames are unmodified in Xen's paravirtualization architecture, the handlers specified in the table remains generally the same with those for real x86 hardware. When an exceptions occurs while executing outside ring 0, Xen's handler creates a copy of the exception stack and return control of proper handler to the process.
+* Modifications: The key modification is for the page fault handler. Since guest OS can not read fault address from the CR2 which is privileged, Xen write it into an extended stack frame.
+
 #### (4) What are the challenges of virtualizing interrupts (especially regarding interrupt masking) on x86 (IA-32)?
+
+
 
 #### (5) How does Xen virtualize interrupts on x86 (IA-32)? What is the benefit of such a design?
 
