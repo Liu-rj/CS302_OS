@@ -8,6 +8,8 @@
 
 #### (1) Define virtualization in 100 words?
 
+virtualization is a technique that relies on software to simulate hardware functionality and enable the possiblity to run serveral different virtual systems on a single hardware which solve the problems such as legacy upgrading and resources underutilization.
+
 #### (2) Please explain the three usage models of virtualization: workload isolation, workload consolidation, workload migration.
 
 * workload isolation: Workload isolation by utilizing virtualization has benefits to the overall system in two perspectives. One is system security, which will be improved because instructions executed are confined to the VM in which they occur, so vicious instructions won't do harm to the hardware. The other is system reliability, which can be enhanced because software programs are isolated in different VMs, so software failure on one VM do not affect the other VMs.
@@ -41,15 +43,27 @@
 
 #### (2) What is ring compression?
 
+Ring deprivileging uses privilege-based mechanisms to protect the VMM from guest software. However, in 64-bit mode, segment limits do not apply, and IA-32 paging does not distinguish privilege levels 0-2. So, the guest OS must run at privilege level 3. Thus, the guest OS will run at the same privilege level as guest applications and will not be protected from them.
+
 #### (3) Without Intel VT-x, how does Xen address ring compression for X86 (IA-32)?
+
+Withour Intel VT-x, Xen run guest OS in ring 1 and application run in ring 3.
 
 #### (4) Without Intel VT-x, how does Xen address ring compression for x86-64?
 
+Without Intel VT-x, hypervisor runs in ring 0 with both gurst kernel and applications run in ring 3. However, guest kernel run in different address space (different page tables) from applications. Then, one process in Xen has two page tables: one is for application context and another for kernel context. The context transition between application and kernel is handled by Xen.
+
 #### (5) What is ring aliasing?
+
+Ring aliasing refers to problems that arise when software is run at a privilege level other than the level for which it was written. First example is that push instruction will push the current privilege level on the stack. Another example is that br.call will store current privilege level into PFS register which can be read at any privilege level. In this two cases, the guest OS can easily know it is not running at privilege level 0.
 
 #### (6) What are VMX root and VMX non-root in VT-x?
 
+VMX root operation and VMX non-root operation are two forms of CPU operation in VT-x architecture. A VMM runs in VMX root and it runs its guest OSes and applications in VMX non-root. Both forms of operation support all four privilege levels, allowing a guest OS to run at its intended privilege level. VMM root has the flexibility to use multiple privilege levels while the software running in VMX non-root is deprivileged.
+
 #### (7) How does Intel VT-x address the challenges of ring aliasing and ring compression?
+
+
 
 ## 3. System calls, interrupts and exceptions
 
