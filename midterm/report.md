@@ -85,13 +85,25 @@ In Xen, hypercall is a interface for controlling interactions between Xen and th
 
 #### (4) What are the challenges of virtualizing interrupts (especially regarding interrupt masking) on x86 (IA-32)?
 
+Typically, A VMM will deny the ability to control interrupt masking. When the guest attempts to control interrupt masking will fault in the context of ring deprivileging. Then, frequently masking and unmasking interrupts will significantly affect system performance, since VMM will need to intercept every guest attempt to do so.
 
+Moreover, if the VMM don't need to intercept every attempt of the guest to modify the interrupts, but deliver virtual interrupt to the guest when the guest has unmasked interrupts, the design of a VMM will be complicated.
 
 #### (5) How does Xen virtualize interrupts on x86 (IA-32)? What is the benefit of such a design?
 
+* How: In Xen, hardware interrupts are replaced with a lightweight event system. Rather than directly causing immediate entry into the domain that is managing the device, Xen triggers appropriate interrupt service routine within Xen.
+
+* benefit: In this way, Xen retains tight control of the system.
+
 #### (6) What is VMCS in Intel VT-x? What are VM exits and VM entry? How are VMCS used during VM exits and VM entry
 
+* In Intel VT-x, VMCS is the abbreviation for virtual-machine control structure, which manages VM entries and VM exits and processor behavior in VMX nonroot operations.
+* VM exits represents the transition from VMX non-root operation to VMX root operation, i.e., from guest to VMM. VM entry indicates the transition from VMX root operation to VMX non-root operation—that is, from VMM to guest.
+* In VMCS, two of the sections are the guest-state area and the host-state area which contains fields corresponding to different components of processor state. During VM exits, guest processor state is saved to the guest-state area and new processor state is loaded from the host-state area. During VM entry, processors state is loaded from guest-state area.
+
 #### (7) How does Xen leverage Intel VT-x to virtualize interrupts?
+
+
 
 #### (8) How does Intel VT-x support exception virtualization?
 
