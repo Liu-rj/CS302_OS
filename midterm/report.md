@@ -43,55 +43,55 @@ Virtualization is a technique that relies on software to simulate hardware funct
 
 #### (2) What is ring compression?
 
-Ring deprivileging uses privilege-based mechanisms to protect the VMM from guest software. However, in 64-bit mode, segment limits do not apply, and IA-32 paging does not distinguish privilege levels 0-2. So, the guest OS must run at privilege level 3. Thus, the guest OS will run at the same privilege level as guest applications and will not be protected from them.
+Ring compression is the situation where guest OS and guest application should run in different ring privileges, but limited by IA-32 pageing in 64-bit mode, privilege levels 0-2 are not distinguished, so guest OS and guest software must in the same privilege. Thus, guest OS can not be protected from the protential harm brought about by guest software processes.
 
 #### (3) Without Intel VT-x, how does Xen address ring compression for X86 (IA-32)?
 
-Withour Intel VT-x, Xen run guest OS in ring 1 and application run in ring 3.
+Without Intel VT-x, Xen run guest OS in ring 1 and application run in ring 3.
 
 #### (4) Without Intel VT-x, how does Xen address ring compression for x86-64?
 
-Without Intel VT-x, hypervisor runs in ring 0 with both gurst kernel and applications run in ring 3. However, guest kernel run in different address space (different page tables) from applications. Then, one process in Xen has two page tables: one is for application context and another for kernel context. The context transition between application and kernel is handled by Xen.
+Without Intel VT-x, hypervisor runs in ring 0 with both guest kernel and applications run in ring 3. However, guest kernel run in different address space (different page tables) from applications. Since processes in Xen have two different page tables seperately in application context and kernel context, failure or crash on application context won't lead to the crash of the kernel. Also, The context transition between application and kernel is handled by Xen. Thus, vicious application process won't have an effect on kernel context.
 
 #### (5) What is ring aliasing?
 
-Ring aliasing refers to problems that arise when software is run at a privilege level other than the level for which it was written. First example is that push instruction will push the current privilege level on the stack. Another example is that br.call will store current privilege level into PFS register which can be read at any privilege level. In this two cases, the guest OS can easily know it is not running at privilege level 0.
+Ring aliasing refers to situation where software is run at a privilege level other than the level for which it was written. First example is that push instruction will push the current privilege level on the stack. Another example is that br.call will store current privilege level into PFS register which can be read at any privilege level. In this two cases, the guest OS can easily know it is not running at privilege level 0.
 
 #### (6) What are VMX root and VMX non-root in VT-x?
 
-VMX root operation and VMX non-root operation are two forms of CPU operation in VT-x architecture. A VMM runs in VMX root and it runs its guest OSes and applications in VMX non-root. Both forms of operation support all four privilege levels, allowing a guest OS to run at its intended privilege level. VMM root has the flexibility to use multiple privilege levels while the software running in VMX non-root is deprivileged.
+VMX root operation and VMX non-root operation are two forms of CPU operation which support all four privilege levels in VT-x architecture. VMM is ran in VMX root while its guest OSes and applications are ran in VMX non-root. Moreover, with different privilege levels privided, the guest OS can run at its intended privilege level, while the software running in VMX non-root is deprivileged.
 
 #### (7) How does Intel VT-x address the challenges of ring aliasing and ring compression?
 
-* ring aliasing: Intel VT-x allows a VMM to run guest software as its intended privilege level. So instructions like push and br.call won't reveal that software is actually running in a virtual machine.
-* ring compression: Intel VT-x, guest OS runs in VMX non-root operation, which support all four privilege levels, allowing a guest OS to run at its intended privilege level and thus preventing it from being ran at the same privilege as software. 
+* ring aliasing: Intel VT-x allows a VMM to run guest software as its intended privilege level. So instructions like push and br.call won't reveal that the guest OS is actually running in a virtual machine.
+* ring compression: In VMX non-root operation of Intel VT-x, guest OS can run at its intended privilege levels with all four privilege levels provided. Thus the guest OS won't be ran at the same privilege as software. 
 
 ## 3. System calls, interrupts and exceptions
 
 #### (1) In the context of ordinary OS without virtualization, what are the purpose of system calls? What is the main difference between system calls and function calls? On x86-64 Linux, how are system call parameters passed to the kernel?
 
 * purpose of system calls:  system calls provide an API between a process and an OS to allow user-level processes to request services of the operating system. It can also protect the OS and hardware from directly accessed by user processes since system calls are the only entry points into the kernel system.
-* Main difference: system calls contrains a switch from user space to kernel space, while functional calls remains in the user space.
+* Main difference: system calls contains a switch from user space to kernel space, while functional calls remains in the user space.
 * On x86-64 linux, system call parameters are passed to the kernel through cpu registers by signal trap.
 
 #### (2) What is a hypercall in Xen?
 
-In Xen, hypercall is a interface for controlling interactions between Xen and the overlying domain. The hypercall interface allows domains to perform a synchronous software trap into the hypervisor to perform a privileged operation, analogous to the use of system calls in conventional operating systems. 
+In Xen, hypercall is a interface for providing privilege or root service for the processes in VM by Xen. The hypercall triggers a software trap into the hypervisor to perform a privileged operation, like the system calls in ordinary OSes. 
 
 #### (3) How does Xen virtualize exceptions on x86 (IA-32)? What modifications does Xen make to the original x86 exception handlers?
 
-* How: A table describing the handler for each type of exception is registered with Xen for validation. Since the stack frames are unmodified in Xen's paravirtualization architecture, the handlers specified in the table remains generally the same with those for real x86 hardware. When an exceptions occurs while executing outside ring 0, Xen's handler creates a copy of the exception stack and return control of proper handler to the process.
+* How: A table describing the handler for exception is registered. The stack frames are unmodified in Xen's paravirtualization architecture, which remains generally the same with those for real x86 hardware. When an exceptions occurs outside ring 0, Xen's handler creates a copy of the exception stack and return proper handler to handle the exception.
 * Modifications: The key modification is for the page fault handler. Since guest OS can not read fault address from the CR2 which is privileged, Xen write it into an extended stack frame.
 
 #### (4) What are the challenges of virtualizing interrupts (especially regarding interrupt masking) on x86 (IA-32)?
 
-Typically, A VMM will deny the ability to control interrupt masking. When the guest attempts to control interrupt masking will fault in the context of ring deprivileging. Then, frequently masking and unmasking interrupts will significantly affect system performance, since VMM will need to intercept every guest attempt to do so.
+Typically, A VMM will deny the ability to control interrupt masking. When the guest attempts to control interrupt masking, a fault will incur in the context of ring deprivileging. Then, frequently masking and unmasking interrupts will significantly affect system performance, since VMM will need to intercept every guest attempt to do so.
 
 Moreover, if the VMM don't need to intercept every attempt of the guest to modify the interrupts, but deliver virtual interrupt to the guest when the guest has unmasked interrupts, the design of a VMM will be complicated.
 
 #### (5) How does Xen virtualize interrupts on x86 (IA-32)? What is the benefit of such a design?
 
-* How: In Xen, hardware interrupts are replaced with a lightweight event system. Rather than directly causing immediate entry into the domain that is managing the device, Xen triggers appropriate interrupt service routine within Xen.
+* How: In Xen, hardware interrupts are replaced with a lightweight event system. Rather than releasing directly control of the hardware device, Xen triggers appropriate interrupt service routine within Xen.
 
 * benefit: In this way, Xen retains tight control of the system.
 
@@ -103,15 +103,19 @@ Moreover, if the VMM don't need to intercept every attempt of the guest to modif
 
 #### (7) How does Xen leverage Intel VT-x to virtualize interrupts?
 
-
+In Intel VT-x arthitecture, interrups are configured to cause VM exits conditionally which will enter in to VMX root operation and handle the interrupts with proper interrupt handler. There are two conditions (controls) to trigger VM exits. One is when the external interrupt exiting control is set, all external interrupts will lead to VM exits. The other is when the interrupt-window exiting control is set, if the guest software is ready to receive interrupts, VM exits will occur.
 
 #### (8) How does Intel VT-x support exception virtualization?
+
+Exception is supported also by VM exits. Exception bitmap which contains 32 entries for the IA-32 exceptions is recorded for VMM to specify which exceptions will cause VM exits and which will not.
 
 ## 4. Address translation
 
 #### (1) Explain x86 (IA-32) address translation.
 
-#### (2) Explain x86-64 address translation
+
+
+#### (2) Explain x86-64 address translation.
 
 #### (3) Explain the relationship between guest virtual memory, guest physical memory, and machine memory.
 
