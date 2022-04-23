@@ -8,13 +8,13 @@
 
 #### (1) Define virtualization in 100 words?
 
-virtualization is a technique that relies on software to simulate hardware functionality and enable the possiblity to run serveral different virtual systems on a single hardware which solve the problems such as legacy upgrading and resources underutilization.
+Virtualization is a technique that relies on software to simulate hardware functionality and enable the possiblity to run serveral different virtual systems on a single hardware which solve the problems such as legacy upgrading and resources underutilization.
 
 #### (2) Please explain the three usage models of virtualization: workload isolation, workload consolidation, workload migration.
 
-* workload isolation: Workload isolation by utilizing virtualization has benefits to the overall system in two perspectives. One is system security, which will be improved because instructions executed are confined to the VM in which they occur, so vicious instructions won't do harm to the hardware. The other is system reliability, which can be enhanced because software programs are isolated in different VMs, so software failure on one VM do not affect the other VMs.
-* workload consolidation: There are mainly three benefits that virtualization has brought about to workload consolidation. The first is to solve the problem of proliferation of heterogeneous data and underutilized servers, virtualization make it possible to consolidate individual workloads onto a single physical platform within a single VM regardless of different hardware and systems, reducing the total cost of ownership. The second is that virtualization mitigates the challenges of software-hardware upgrads by allowing systems to run legacy and new operating systems concurrently.
-* workload migration: virtualization decouples the guest from the hardware on which it is currently running. So, it is easier to migrate the guest to a different platform. In addition, VM migration can be triggered automatically by workload balancing or failure-prediction agents. This capability delivers improved quality of service at a lower operational cost.
+* workload isolation: Workload isolation by utilizing virtualization has benefits to the overall system in two perspectives. One is system security, which will be improved because instructions executed are confined to the inner of the VM, so vicious instructions won't do harm to the hardware. The other is system reliability, which can be enhanced because software programs are seperated in different VMs, so software crash on one VM will not lead to the misbehavoir in other VMs.
+* workload consolidation: There are mainly three benefits that virtualization has brought about to workload consolidation. The first two are to solve the problem of proliferation of heterogeneous data and underutilized servers, virtualization combine distributed workloads on serveral VMs managed by one VMM regardless of different hardware, reducing the difficulties to manage the numerous data and better leveraging the hardware resources. The Third is that virtualization eliminate the necessity to do entire system software-hardware upgrades by allowing physical devices to run legacy and new OSes and softwares concurrently.
+* workload migration: virtualization decouples the guest from the underlying hardware. So, it is easier to migrate the guest to a different platform. In addition, whenever there are workload balancing or failure-prediction agents, workload migration can be automatically triggered by VMM, which improves the service quality while undertaking a lower operational cost.
 
 #### (3) List 3 well-known VMMs.
 
@@ -24,9 +24,9 @@ virtualization is a technique that relies on software to simulate hardware funct
 
 #### (4) Explain the following terms: paravirtualization, full virtualization, binary translation, hardware-assisted virtualization, hybrid virtualization.
 
-* paravirtualization: paravirtualization is an enhancement of virtualization technology in which a guest OS that has been modified inside a virtual machine (VM) in order to use hypercalls for operations to handle instructions at compile time.
-* full virtualization: full virtualization is a virtualization where the virtual hardware exposed is functionally identical to the underlying machine which allows unmodified operating systems to be hosted.
-* binary translation: binary translation is where A VMM can support legacy operating systems by making modifications directly to guest-OS binaries, and thus supporting a broader range of operating systems, albeit with higher performance overheads, than VMMs that use paravirtualization.
+* paravirtualization: In paravirtualization, guest OS are modified at compile time inside VM in order to support hypercalls handle instructions and communicating to the host OS and hardware device.
+* full virtualization: In virtualization, the virtual hardware is not modified and  functionally identical to the underlying true hardware device.
+* binary translation: In binary translation, guest-OS binaries are modified directly by VMM to support legacy OS. Thus,  this technique can support more OS, even very old and outdated ones. However, this modification endure a higher performance overhead.
 * hardware-assisted virtualization: In hardware-assited virtualization, VMM runs in the privilege mode and allow a cpu instruction set to run directly without modifying guest OSes.
 * hybrid virtualization:  hybrid-virtualization combines paravirtualization and hardware-assisted virtualization. For I/O devices, Timer, Idle handling, Interrupt controllers and MMU are identified to use para-virtualization while maintaining the same cpu behavoir as the hardware-assisted virtualization.
 
