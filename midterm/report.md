@@ -113,11 +113,15 @@ Exception is supported also by VM exits. Exception bitmap which contains 32 entr
 
 #### (1) Explain x86 (IA-32) address translation.
 
-
+In x86 (IA-32) arthitecture, both segmentation and paging are adopted. So the sequence of address translation should be: virtual address -> segmentation table -> linear address -> page table -> physical address. In the paging translation step, 2-level page table structure is adopted, where the highest 10 bits are for the first-level page table to locate the address of the second-level page table, the mid 10 bits are used to locate the base address of the physical page, and the last 12 bits are used for offset within page.
 
 #### (2) Explain x86-64 address translation.
 
+x86-64 support similar structure of segmentation + paging as that in x86 (IA-32). The major difference is that x86-64 leverages 4-level page table where the first 16 bits are unused, the middle 36 bits are divided into 9-bit groups to maintain a 4-level page table structure, and the last 12 bits are offset.
+
 #### (3) Explain the relationship between guest virtual memory, guest physical memory, and machine memory.
+
+ 
 
 #### (4) How does Xen manage the per-process page table in the VM and the per-OS page table in the VMM?
 
