@@ -121,14 +121,31 @@ x86-64 support similar structure of segmentation + paging as that in x86 (IA-32)
 
 #### (3) Explain the relationship between guest virtual memory, guest physical memory, and machine memory.
 
- 
+* guest virtual memory: the virtual memory where guest processes run programs, fetch and store data.
+* guest physical memory: the physical memory translated from guest virtual memory by guest OS, which is just a virtualization of machine memory by VMM.
+* machine memory: the true physical memory of the hardware device, translated by VMM or host OS.
+
+The translation procedure should be: guest virtual memory -> guest OS -> guest physical memory -> VMM -> machine memory
 
 #### (4) How does Xen manage the per-process page table in the VM and the per-OS page table in the VMM?
 
+* per-process page table: This page table is registered as read-only in Xen and stored in guest OS. guest OS will need to use hypercall to update the page table through Xen which is in charge of validation and execution.
+* per-OS page table: This page table is transparent in all guest OSes (all VMs). Every guest OS can translate guest physical memory to machine memory  according to this page table.
+
 #### (5) What does “Address-space compression” mean?
+
+This refers to the situation where some portions of guest virtual memory are reserved by VMM to provide service. Then how to protect these memory fields from guest OS and user processes while also providing access to them becomes a problem.
 
 #### (6) How does Xen address the problem of “Address-space compression”?
 
+In Xen architecture, those reserved memory fields are read-only to guest OSes and processes. When a guest OS attempts to write or update within the fields, the action is taken over by Xen for first validation and then execution, which protects the memory fields while still providing access.
+
 #### (7) What is Intel EPT? How to do MMU virtualization with Intel EPT?
 
+Intel EPT is the abbreviation for Extended Page Tables, is the replacement of shadow page table. It is introduced to mitigate the overheads caused by the translation of shadow page table.
+
+When EPT is enabled and active, the extended page tables can be directed accessed by guest OS with EPT base pointer to do the translation from guest physical address to host physical address with not VM exits, which thus reducing paging related overheads.
+
 #### (8) How does Xen allocate physical memory to each domain?
+
+When each domain is created, a portion os physical memory is allocated by Xen, resulting a memory isolation from other guests. Meanwhile, states of maximum allowed memory and currency allocated memory is recorded. When a guest or a domain requires to extend its memory space, a check if the currently allocated has reached the maximum limit will be conducted to decide the allocation.
