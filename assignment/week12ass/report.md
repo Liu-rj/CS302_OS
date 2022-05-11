@@ -54,7 +54,7 @@ If P4 is granted with (0,0,1,1), then available is (1,0,0,1).
 |  T0  | (1,0,0,1) | P3 done |
 |  T1  | (1,0,1,1) | P2 done |
 |  T2  | (1,1,1,2) | P4 done |
-|  T3  | (2,2,1,2) | P1 done |
+|  T3  | (2,2,2,3) | P1 done |
 
 All processes are done, the system is not in a deadlock state.
 
